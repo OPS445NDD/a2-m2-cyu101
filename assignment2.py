@@ -54,19 +54,28 @@ def parse_command_args() -> object:
     return parser.parse_args()
 
 def percent_to_graph(percent: float, length: int=20) -> str:
-    "turns a percent 0.0 - 1.0 into a bar graph"
-    pass
+    """Turn a decimal percentage from 0.0 to 1.0 into a bar graph."""
+    hashes = int(percent * length)
+    spaces = length - hashes
+    return "#" * hashes + " " * spaces
+
 
 def get_sys_mem() -> int:
-    "return total system memory (used or available) in kB"
-    # open the meminfo file to do this!
-    pass
+    """Return total system memory in KiB."""
+    with open("/proc/meminfo", "r") as mem_file:
+        for line in mem_file:
+            if line.startswith("MemTotal:"):
+                return int(line.split()[1])
+    return 0
+
 
 def get_avail_mem() -> int:
-    "return total memory that is currently available"
-    # open the meminfo file to do this!
-    pass
-
+    """Return currently available system memory in KiB."""
+    with open("/proc/meminfo", "r") as mem_file:
+        for line in mem_file:
+            if line.startswith("MemAvailable:"):
+                return int(line.split()[1])
+    return 0
 def pids_of_prog(app_name: str) -> list:
     """Return all process IDs associated with an application."""
     pid_output = os.popen(f"pidof {app_name}").read().strip()
